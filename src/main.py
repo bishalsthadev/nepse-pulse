@@ -84,30 +84,34 @@ def is_digest_time() -> bool:
 
 def run_monitor():
     """Standard monitoring run — check prices and fire threshold alerts."""
-    print(f"[main] Monitor run at {datetime.now(timezone.utc).isoformat()}")
+    now = datetime.now(timezone.utc)
+    print(f"[main] Monitor run at {now.isoformat()}")
 
-    if not is_market_open():
-        print("[main] Market is closed — skipping price check.")
-        return
+    market_open = is_market_open()
+    if not market_open:
+        print("[main] Market is closed — fetching last known prices for dashboard only.")
 
     state  = load_state()
     prices = fetch_all_prices(list(STOCKS.keys()))
-    alerts = analyze(prices, state)
 
-    print(f"[main] {len(alerts)} alert(s) generated.")
-    for a in alerts:
-        print(f"  {a.alert_type.upper()} — {a.symbol} @ {a.current_price}")
-
-    state = update_state(state, prices, alerts)
-    save_state(state)
-
-    # Update dashboard data files
+    # Always update the dashboard so the portfolio is visible
     update_prices_json(prices)
-    if alerts:
-        append_alerts_json(alerts)
+    state = update_state(state, prices, [])
 
-    # Send notifications
-    dispatch(alerts)
+    # Only check thresholds and send alerts during market hours
+    if market_open:
+        alerts = analyze(prices, state)
+        print(f"[main] {len(alerts)} alert(s) generated.")
+        for a in alerts:
+            print(f"  {a.alert_type.upper()} — {a.symbol} @ {a.current_price}")
+        state = update_state(state, prices, alerts)
+        if alerts:
+            append_alerts_json(alerts)
+        dispatch(alerts)
+    else:
+        print("[main] Skipping alert checks — market closed.")
+
+    save_state(state)
 
 
 def run_digest():
