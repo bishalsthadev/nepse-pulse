@@ -1,4 +1,211 @@
 {
-  "updated_at": null,
-  "stocks": []
+  "updated_at": "2026-03-27T15:51:39.710543+00:00",
+  "stocks": [
+    {
+      "symbol": "NMFBS",
+      "name": "National Laghubitta Bittiya Sanstha",
+      "sector": "Microfinance",
+      "price": 1205.0,
+      "holding": 50,
+      "avg_cost": 1131.7,
+      "pnl": 3665.0,
+      "pnl_pct": 6.48,
+      "status": "watching",
+      "status_color": "#6b7280",
+      "status_label": "Watching",
+      "thresholds": [
+        {
+          "type": "add_zone",
+          "range": "1080\u20131100 NPR"
+        },
+        {
+          "type": "partial_exit",
+          "range": "1350\u20131380 NPR"
+        },
+        {
+          "type": "full_exit",
+          "range": "1460\u20131500 NPR"
+        },
+        {
+          "type": "stop_loss",
+          "range": "1060 NPR"
+        }
+      ]
+    },
+    {
+      "symbol": "NABIL",
+      "name": "Nabil Bank Ltd.",
+      "sector": "Commercial Bank",
+      "price": 543.0,
+      "holding": 0,
+      "avg_cost": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "status": "buy_zone",
+      "status_color": "#22c55e",
+      "status_label": "\ud83d\udfe2 BUY",
+      "thresholds": [
+        {
+          "type": "buy_zone",
+          "range": "530\u2013555 NPR"
+        },
+        {
+          "type": "add_zone",
+          "range": "490\u2013510 NPR"
+        },
+        {
+          "type": "partial_exit",
+          "range": "590\u2013610 NPR"
+        },
+        {
+          "type": "full_exit",
+          "range": "640\u2013680 NPR"
+        },
+        {
+          "type": "stop_loss",
+          "range": "480 NPR"
+        }
+      ]
+    },
+    {
+      "symbol": "EBL",
+      "name": "Everest Bank Ltd.",
+      "sector": "Commercial Bank",
+      "price": 712.0,
+      "holding": 0,
+      "avg_cost": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "status": "buy_zone",
+      "status_color": "#22c55e",
+      "status_label": "\ud83d\udfe2 BUY",
+      "thresholds": [
+        {
+          "type": "buy_zone",
+          "range": "690\u2013725 NPR"
+        },
+        {
+          "type": "add_zone",
+          "range": "640\u2013660 NPR"
+        },
+        {
+          "type": "partial_exit",
+          "range": "755\u2013770 NPR"
+        },
+        {
+          "type": "full_exit",
+          "range": "800\u2013830 NPR"
+        },
+        {
+          "type": "stop_loss",
+          "range": "615 NPR"
+        }
+      ]
+    },
+    {
+      "symbol": "SBL",
+      "name": "Siddhartha Bank Ltd.",
+      "sector": "Commercial Bank",
+      "price": 412.9,
+      "holding": 0,
+      "avg_cost": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "status": "watching",
+      "status_color": "#6b7280",
+      "status_label": "Watching",
+      "thresholds": [
+        {
+          "type": "buy_zone",
+          "range": "390\u2013408 NPR"
+        },
+        {
+          "type": "add_zone",
+          "range": "355\u2013375 NPR"
+        },
+        {
+          "type": "partial_exit",
+          "range": "440\u2013455 NPR"
+        },
+        {
+          "type": "full_exit",
+          "range": "480\u2013500 NPR"
+        },
+        {
+          "type": "stop_loss",
+          "range": "340 NPR"
+        }
+      ]
+    },
+    {
+      "symbol": "HIDCL",
+      "name": "Hydroelectricity Investment and Development Company",
+      "sector": "Hydropower",
+      "price": 298.0,
+      "holding": 0,
+      "avg_cost": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "status": "buy_zone",
+      "status_color": "#22c55e",
+      "status_label": "\ud83d\udfe2 BUY",
+      "thresholds": [
+        {
+          "type": "buy_zone",
+          "range": "285\u2013305 NPR"
+        },
+        {
+          "type": "add_zone",
+          "range": "252\u2013262 NPR"
+        },
+        {
+          "type": "partial_exit",
+          "range": "325\u2013335 NPR"
+        },
+        {
+          "type": "full_exit",
+          "range": "360\u2013390 NPR"
+        },
+        {
+          "type": "stop_loss",
+          "range": "242 NPR"
+        }
+      ]
+    },
+    {
+      "symbol": "SKHL",
+      "name": "Super Khudi Hydropower Ltd.",
+      "sector": "Hydropower",
+      "price": null,
+      "holding": 0,
+      "avg_cost": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "status": "watching",
+      "status_color": "#6b7280",
+      "status_label": "Watching",
+      "thresholds": [
+        {
+          "type": "buy_zone",
+          "range": "285\u2013315 NPR"
+        },
+        {
+          "type": "add_zone",
+          "range": "245\u2013265 NPR"
+        },
+        {
+          "type": "partial_exit",
+          "range": "380\u2013410 NPR"
+        },
+        {
+          "type": "full_exit",
+          "range": "460\u2013500 NPR"
+        },
+        {
+          "type": "stop_loss",
+          "range": "220 NPR"
+        }
+      ]
+    }
+  ]
 }
