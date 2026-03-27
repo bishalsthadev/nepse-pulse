@@ -1,0 +1,85 @@
+name: NEPSE Pulse Monitor
+
+on:
+  schedule:
+    # Every 30 min during NEPSE trading hours (Sun–Thu, 11 AM–3 PM NST = 05:15–09:15 UTC)
+    - cron: '15 5 * * 0,1,2,3,4'
+    - cron: '45 5 * * 0,1,2,3,4'
+    - cron: '15 6 * * 0,1,2,3,4'
+    - cron: '45 6 * * 0,1,2,3,4'
+    - cron: '15 7 * * 0,1,2,3,4'
+    - cron: '45 7 * * 0,1,2,3,4'
+    - cron: '15 8 * * 0,1,2,3,4'
+    - cron: '45 8 * * 0,1,2,3,4'
+    - cron: '15 9 * * 0,1,2,3,4'
+    # Daily digest: 09:30 UTC = 3:15 PM NST (15 min after close)
+    - cron: '30 9 * * 0,1,2,3,4'
+
+  # Allow manual trigger from GitHub Actions UI
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Run mode'
+        required: false
+        default: 'monitor'
+        type: choice
+        options: [monitor, digest]
+
+permissions:
+  contents: write   # needed to commit state.json + data files back to repo
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Determine run mode
+        id: mode
+        run: |
+          # If manually triggered, use the input; otherwise detect from time
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "mode=${{ github.event.inputs.mode }}" >> $GITHUB_OUTPUT
+          else
+            MINUTE=$(date -u +%M)
+            HOUR=$(date -u +%H)
+            # Digest runs at 09:30 UTC
+            if [ "$HOUR" = "09" ] && [ "$MINUTE" = "30" ]; then
+              echo "mode=digest" >> $GITHUB_OUTPUT
+            else
+              echo "mode=monitor" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Run NEPSE Pulse
+        env:
+          RESEND_API_KEY:   ${{ secrets.RESEND_API_KEY }}
+          ALERT_EMAIL_TO:   ${{ secrets.ALERT_EMAIL_TO }}
+          ALERT_EMAIL_FROM: ${{ secrets.ALERT_EMAIL_FROM }}
+          NTFY_TOPIC:       ${{ secrets.NTFY_TOPIC }}
+        run: |
+          cd src
+          python main.py ${{ steps.mode.outputs.mode }}
+
+      - name: Commit updated state and dashboard data
+        run: |
+          git config --local user.email "nepse-pulse-bot@users.noreply.github.com"
+          git config --local user.name  "NEPSE Pulse Bot"
+          git pull --rebase origin main || true
+          git add state/state.json public/data/ || true
+          git diff --staged --quiet || git commit -m "chore: update prices + state [$(date -u '+%Y-%m-%d %H:%M UTC')]"
+          git push || true
