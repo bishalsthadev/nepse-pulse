@@ -3,55 +3,176 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NEPSE Pulse — Stock Monitor</title>
+  <title>NEPSE Pulse</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>" />
 </head>
 <body>
-  <!-- HEADER -->
-  <header>
-    <div class="header-inner">
-      <div class="logo">📈 NEPSE Pulse</div>
-      <div class="header-right">
+
+  <!-- ── Auth screen ──────────────────────────────────── -->
+  <div id="auth-screen" class="auth-screen hidden">
+    <div class="auth-card">
+      <h1>📈 NEPSE Pulse</h1>
+      <p class="auth-subtitle">Nepal Stock Monitor</p>
+
+      <div class="auth-tabs">
+        <button class="tab-btn active" data-tab="login">Login</button>
+        <button class="tab-btn" data-tab="register">Register</button>
+      </div>
+
+      <form id="login-form" class="auth-form">
+        <input type="text"     id="login-username" placeholder="Username" autocomplete="username" required />
+        <input type="password" id="login-password" placeholder="Password" autocomplete="current-password" required />
+        <button type="submit" class="btn-primary">Login</button>
+        <p id="login-error" class="form-error hidden"></p>
+      </form>
+
+      <form id="register-form" class="auth-form hidden">
+        <input type="text"     id="reg-username" placeholder="Username (3–30 chars, letters/numbers/_)" autocomplete="username" required />
+        <input type="password" id="reg-password" placeholder="Password (min 8 chars)" autocomplete="new-password" required />
+        <button type="submit" class="btn-primary">Create Account</button>
+        <p id="reg-error" class="form-error hidden"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── App shell ─────────────────────────────────────── -->
+  <div id="app" class="hidden">
+    <header>
+      <div class="header-left">
+        <span class="logo">📈 NEPSE Pulse</span>
         <span id="market-badge" class="badge badge-closed">Market Closed</span>
-        <span id="last-updated" class="muted">Loading…</span>
-        <button id="notif-btn" class="btn-ghost" onclick="requestNotifPermission()">
-          🔔 Enable Alerts
-        </button>
+      </div>
+      <nav class="header-nav">
+        <button class="nav-btn active" data-page="dashboard">Dashboard</button>
+        <button class="nav-btn" data-page="add">＋ Add Stock</button>
+        <button class="nav-btn" data-page="settings">Settings</button>
+        <button class="nav-btn logout" id="logout-btn">Logout</button>
+      </nav>
+    </header>
+
+    <!-- Dashboard -->
+    <main id="page-dashboard" class="page">
+      <section class="section">
+        <h2 class="section-title">My Portfolio</h2>
+        <div id="portfolio-cards" class="cards-grid">
+          <div class="card skeleton"></div>
+          <div class="card skeleton"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">Watchlist</h2>
+        <div class="table-wrap">
+          <table id="watchlist-table">
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Price (NPR)</th>
+                <th>Status</th>
+                <th class="hide-mobile">Buy Zone</th>
+                <th class="hide-mobile">Exit Zone</th>
+                <th class="hide-mobile">Stop Loss</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="watchlist-body">
+              <tr><td colspan="7" class="muted">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">Recent Alerts</h2>
+        <div id="alert-feed"><p class="muted">No alerts yet.</p></div>
+      </section>
+
+      <p class="last-updated">Updated: <span id="last-updated-time">—</span></p>
+    </main>
+
+    <!-- Add Stock -->
+    <main id="page-add" class="page hidden">
+      <section class="section">
+        <h2 class="section-title">Add Stock to Watchlist</h2>
+        <input type="text" id="stock-search" class="search-input" placeholder="Search symbol or name…" />
+        <div id="stock-results" class="stock-results"></div>
+      </section>
+    </main>
+
+    <!-- Settings -->
+    <main id="page-settings" class="page hidden">
+      <section class="section">
+        <h2 class="section-title">Settings</h2>
+
+        <div class="settings-card">
+          <h3>Telegram Notifications</h3>
+          <p class="settings-hint">
+            1. Message your bot (send <code>/start</code> or any text)<br>
+            2. Send <code>/chatid</code> — the bot will reply with your Chat ID<br>
+            3. Paste it below and click Save
+          </p>
+          <div class="settings-row">
+            <input type="text" id="telegram-chat-id" placeholder="e.g. 1993690941" />
+            <button id="save-telegram" class="btn-primary">Save</button>
+          </div>
+          <p id="settings-msg" class="form-success hidden"></p>
+        </div>
+
+        <div class="settings-card">
+          <h3>Account</h3>
+          <p>Logged in as <strong id="settings-username"></strong></p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ── Add Stock Modal ───────────────────────────────── -->
+  <div id="add-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h3 id="modal-title">Add Stock</h3>
+          <p id="modal-price" class="modal-price"></p>
+        </div>
+        <button id="modal-close" class="modal-close">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Shares Held <span class="hint">(0 if just watching)</span></label>
+          <input type="number" id="m-holding" min="0" value="0" />
+        </div>
+        <div class="form-group">
+          <label>Average Buy Price (NPR) <span class="hint">(optional)</span></label>
+          <input type="number" id="m-avg" min="0" step="0.01" placeholder="Leave blank if not holding" />
+        </div>
+
+        <div class="threshold-section">
+          <div class="threshold-header">
+            <h4>Price Alert Thresholds</h4>
+            <span id="ai-badge" class="ai-badge hidden">✨ AI Suggested</span>
+          </div>
+          <p id="suggest-loading" class="form-info hidden">Loading AI suggestions…</p>
+          <div class="threshold-grid">
+            <div class="threshold-row"><label>Buy Zone</label>    <input type="number" id="m-buy-lo"     placeholder="Low"  /> <span>–</span> <input type="number" id="m-buy-hi"     placeholder="High" /></div>
+            <div class="threshold-row"><label>Add Zone</label>    <input type="number" id="m-add-lo"     placeholder="Low"  /> <span>–</span> <input type="number" id="m-add-hi"     placeholder="High" /></div>
+            <div class="threshold-row"><label>Partial Exit</label><input type="number" id="m-partial-lo" placeholder="Low"  /> <span>–</span> <input type="number" id="m-partial-hi" placeholder="High" /></div>
+            <div class="threshold-row"><label>Full Exit</label>   <input type="number" id="m-full-lo"    placeholder="Low"  /> <span>–</span> <input type="number" id="m-full-hi"    placeholder="High" /></div>
+            <div class="threshold-row"><label>Stop Loss</label>   <input type="number" id="m-stop"       placeholder="Price" class="span-full" /></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="modal-save" class="btn-primary">Add to Watchlist</button>
+        <button id="modal-cancel" class="btn-secondary">Cancel</button>
       </div>
     </div>
-  </header>
+  </div>
 
-  <main>
-    <!-- PORTFOLIO SUMMARY -->
-    <section class="section">
-      <h2 class="section-title">Your Portfolio</h2>
-      <div id="portfolio-cards" class="cards-grid">
-        <div class="card skeleton"></div>
-        <div class="card skeleton"></div>
-      </div>
-    </section>
-
-    <!-- WATCHLIST -->
-    <section class="section">
-      <h2 class="section-title">Watchlist</h2>
-      <div id="watchlist" class="table-wrap">
-        <p class="muted">Loading prices…</p>
-      </div>
-    </section>
-
-    <!-- ALERT FEED -->
-    <section class="section">
-      <h2 class="section-title">Recent Alerts</h2>
-      <div id="alert-feed">
-        <p class="muted">No alerts yet.</p>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <p>Data from NEPSE public sources · Refreshes every 60 s · Not financial advice</p>
-  </footer>
+  <!-- Toast container -->
+  <div id="toast-container"></div>
 
   <script src="app.js"></script>
 </body>

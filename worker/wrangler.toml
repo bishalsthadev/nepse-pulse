@@ -1,0 +1,19 @@
+name = "nepse-pulse"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "nepse-pulse-db"
+database_id = "acb2fd06-20e7-4617-8549-d52fe644612f"
+
+[triggers]
+# Every 2 min during NEPSE market hours (05:15–09:30 UTC = 11:00 AM–3:15 PM NST)
+# Sunday(0)–Thursday(4) in UTC weekday numbering
+crons = ["*/2 5-9 * * *"]
+
+# Secrets — set via: wrangler secret put <NAME>
+# JWT_SECRET          — random 32-char string (e24ed4bebc4e954c983b743d96da3bb4)
+# GEMINI_API_KEY      — from aistudio.google.com (free)
+# TELEGRAM_BOT_TOKEN  — your existing bot token
