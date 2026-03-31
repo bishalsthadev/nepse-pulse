@@ -67,10 +67,11 @@ jobs:
 
       - name: Run NEPSE Pulse
         env:
-          RESEND_API_KEY:   ${{ secrets.RESEND_API_KEY }}
-          ALERT_EMAIL_TO:   ${{ secrets.ALERT_EMAIL_TO }}
-          ALERT_EMAIL_FROM: ${{ secrets.ALERT_EMAIL_FROM }}
-          NTFY_TOPIC:       ${{ secrets.NTFY_TOPIC }}
+          RESEND_API_KEY:      ${{ secrets.RESEND_API_KEY }}
+          ALERT_EMAIL_TO:      ${{ secrets.ALERT_EMAIL_TO }}
+          ALERT_EMAIL_FROM:    ${{ secrets.ALERT_EMAIL_FROM }}
+          TELEGRAM_BOT_TOKEN:  ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:    ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           cd src
           python main.py ${{ steps.mode.outputs.mode }}

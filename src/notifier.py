@@ -1,7 +1,7 @@
 """
 Sends alerts via:
   1. Resend.com  — formatted HTML email
-  2. ntfy.sh     — instant push notification (browser + mobile app)
+  2. Telegram    — instant push notification via bot
 """
 
 import json
@@ -9,7 +9,7 @@ import requests
 from analyzer import Alert, ALERT_META
 from config import (
     RESEND_API_KEY, ALERT_EMAIL_TO, ALERT_EMAIL_FROM,
-    NTFY_TOPIC, NTFY_BASE_URL, STOCKS,
+    TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, STOCKS,
 )
 
 
@@ -151,55 +151,87 @@ def _build_html(alerts: list[Alert], is_digest: bool) -> str:
 
 
 # -------------------------------------------------------------------
-# Push notification via ntfy.sh
+# Telegram push notification
 # -------------------------------------------------------------------
 
-def send_push(alert: Alert) -> bool:
-    if not NTFY_TOPIC:
-        print("[notifier] NTFY_TOPIC not set — skipping push.")
+def send_telegram(alert: Alert) -> bool:
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        print("[notifier] TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set — skipping Telegram.")
         return False
 
     meta = ALERT_META[alert.alert_type]
-    title = f"{meta['emoji']} {alert.symbol} — {meta['label']}"
-    body  = (
-        f"Price: {alert.current_price:,.0f} NPR\n"
-        f"Zone: {alert.threshold}\n"
-        f"{alert.action}"
-    )
-    if alert.pct_change is not None:
-        body = f"Move: {alert.pct_change:+.1f}%\n" + body
+    cfg = STOCKS.get(alert.symbol, {})
+    holding = cfg.get("holding", 0)
+    avg_cost = cfg.get("avg_buy_price")
 
+    lines = [
+        f"{meta['emoji']} <b>{alert.symbol} — {meta['label']}</b>",
+        f"<i>{alert.name}</i>",
+        "",
+        f"💰 Price: <b>{alert.current_price:,.2f} NPR</b>",
+        f"🎯 Zone: {alert.threshold}",
+    ]
+
+    if alert.pct_change is not None:
+        sign = "+" if alert.pct_change > 0 else ""
+        lines.append(f"⚡ Move: {sign}{alert.pct_change:.1f}% this cycle")
+
+    if holding > 0 and avg_cost:
+        pnl = (alert.current_price - avg_cost) * holding
+        pct = ((alert.current_price - avg_cost) / avg_cost) * 100
+        sign = "+" if pnl >= 0 else ""
+        lines.append(f"📊 P&amp;L: {sign}{pnl:,.0f} NPR ({pct:+.1f}%) on {holding} shares")
+
+    lines += ["", f"👉 <b>{alert.action}</b>"]
+
+    text = "\n".join(lines)
     try:
         r = requests.post(
-            f"{NTFY_BASE_URL}/{NTFY_TOPIC}",
-            data=body.encode("utf-8"),
-            headers={
-                "Title":    title,
-                "Priority": meta["priority"],
-                "Tags":     _ntfy_tags(alert.alert_type),
-            },
+            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+            json={"chat_id": TELEGRAM_CHAT_ID, "text": text, "parse_mode": "HTML"},
             timeout=10,
         )
         r.raise_for_status()
-        print(f"[notifier] Push sent: {title}")
+        print(f"[notifier] Telegram sent: {alert.symbol} {meta['label']}")
         return True
     except Exception as e:
-        print(f"[notifier] Push failed: {e}")
+        print(f"[notifier] Telegram failed: {e}")
         return False
 
 
-def _ntfy_tags(alert_type: str) -> str:
-    tag_map = {
-        "stop_loss":    "rotating_light,skull",
-        "full_exit":    "red_circle,moneybag",
-        "partial_exit": "yellow_circle,moneybag",
-        "buy_zone":     "green_circle,chart_with_upwards_trend",
-        "add_zone":     "blue_circle,chart_with_upwards_trend",
-        "rapid_up":     "zap,arrow_up",
-        "rapid_down":   "zap,arrow_down",
-        "daily_digest": "bar_chart",
-    }
-    return tag_map.get(alert_type, "bell")
+def send_telegram_digest(alerts: list[Alert]) -> bool:
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        print("[notifier] Telegram not configured — skipping digest.")
+        return False
+
+    lines = ["📊 <b>NEPSE Pulse — Daily Digest</b>", ""]
+    for a in alerts:
+        meta = ALERT_META[a.alert_type]
+        cfg = STOCKS.get(a.symbol, {})
+        holding = cfg.get("holding", 0)
+        avg_cost = cfg.get("avg_buy_price")
+
+        line = f"{meta['emoji']} <b>{a.symbol}</b> — {a.current_price:,.2f} NPR | {meta['label']}"
+        if holding > 0 and avg_cost:
+            pnl = (a.current_price - avg_cost) * holding
+            sign = "+" if pnl >= 0 else ""
+            line += f" | P&amp;L: {sign}{pnl:,.0f} NPR"
+        lines.append(line)
+
+    lines += ["", "View dashboard: stock.bishalstha.info.np"]
+    text = "\n".join(lines)
+    try:
+        r = requests.post(
+            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+            json={"chat_id": TELEGRAM_CHAT_ID, "text": text, "parse_mode": "HTML"},
+            timeout=10,
+        )
+        r.raise_for_status()
+        print("[notifier] Telegram digest sent.")
+        return True
+    except Exception as e:
+        print(f"[notifier] Telegram digest failed: {e}")
+        return False
 
 
 # -------------------------------------------------------------------
@@ -213,7 +245,9 @@ def dispatch(alerts: list[Alert], is_digest: bool = False) -> None:
     # Always send email (batch all alerts into one email)
     send_email(alerts, is_digest=is_digest)
 
-    # Send individual push notifications (one per alert)
-    if not is_digest:
+    # Send Telegram notifications
+    if is_digest:
+        send_telegram_digest(alerts)
+    else:
         for alert in alerts:
-            send_push(alert)
+            send_telegram(alert)

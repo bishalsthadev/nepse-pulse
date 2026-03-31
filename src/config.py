@@ -117,5 +117,5 @@ RESEND_API_KEY  = os.environ.get("RESEND_API_KEY", "")
 ALERT_EMAIL_TO  = os.environ.get("ALERT_EMAIL_TO", "bishalkumar45657@gmail.com")
 ALERT_EMAIL_FROM = os.environ.get("ALERT_EMAIL_FROM", "NEPSE Pulse <alerts@bishalstha.info.np>")
 
-NTFY_TOPIC      = os.environ.get("NTFY_TOPIC", "")   # e.g. nepse-pulse-abc123
-NTFY_BASE_URL   = "https://ntfy.sh"
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID   = os.environ.get("TELEGRAM_CHAT_ID", "")
