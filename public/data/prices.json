@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-10T07:34:45.138235+00:00",
+  "updated_at": "2026-05-10T07:48:49.733634+00:00",
   "stocks": [
     {
       "symbol": "NMFBS",
@@ -36,7 +36,7 @@
       "symbol": "NABIL",
       "name": "Nabil Bank Ltd.",
       "sector": "Commercial Bank",
-      "price": 523.0,
+      "price": null,
       "holding": 0,
       "avg_cost": null,
       "pnl": null,
@@ -141,7 +141,7 @@
       "symbol": "HIDCL",
       "name": "Hydroelectricity Investment and Development Company",
       "sector": "Hydropower",
-      "price": null,
+      "price": 267.0,
       "holding": 0,
       "avg_cost": null,
       "pnl": null,
