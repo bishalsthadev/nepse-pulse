@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-10T07:48:49.733634+00:00",
+  "updated_at": "2026-05-10T08:21:49.419319+00:00",
   "stocks": [
     {
       "symbol": "NMFBS",
@@ -36,7 +36,7 @@
       "symbol": "NABIL",
       "name": "Nabil Bank Ltd.",
       "sector": "Commercial Bank",
-      "price": null,
+      "price": 523.0,
       "holding": 0,
       "avg_cost": null,
       "pnl": null,
