@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-12T11:03:54.526432+00:00",
+  "updated_at": "2026-05-12T11:26:44.589086+00:00",
   "stocks": [
     {
       "symbol": "NMFBS",
@@ -141,7 +141,7 @@
       "symbol": "HIDCL",
       "name": "Hydroelectricity Investment and Development Company",
       "sector": "Hydropower",
-      "price": 274.0,
+      "price": null,
       "holding": 0,
       "avg_cost": null,
       "pnl": null,
