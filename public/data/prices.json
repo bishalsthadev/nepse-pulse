@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-13T11:40:33.566648+00:00",
+  "updated_at": "2026-05-14T08:03:17.100774+00:00",
   "stocks": [
     {
       "symbol": "NMFBS",
@@ -71,7 +71,7 @@
       "symbol": "EBL",
       "name": "Everest Bank Ltd.",
       "sector": "Commercial Bank",
-      "price": 706.0,
+      "price": 704.2,
       "holding": 0,
       "avg_cost": null,
       "pnl": null,
@@ -106,7 +106,7 @@
       "symbol": "SBL",
       "name": "Siddhartha Bank Ltd.",
       "sector": "Commercial Bank",
-      "price": 395.5,
+      "price": 393.5,
       "holding": 0,
       "avg_cost": null,
       "pnl": null,
@@ -141,7 +141,7 @@
       "symbol": "HIDCL",
       "name": "Hydroelectricity Investment and Development Company",
       "sector": "Hydropower",
-      "price": 268.0,
+      "price": 268.1,
       "holding": 0,
       "avg_cost": null,
       "pnl": null,
