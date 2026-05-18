@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-17T10:52:00.011799+00:00",
+  "updated_at": "2026-05-18T08:52:53.260266+00:00",
   "stocks": [
     {
       "symbol": "NMFBS",
@@ -71,14 +71,14 @@
       "symbol": "EBL",
       "name": "Everest Bank Ltd.",
       "sector": "Commercial Bank",
-      "price": 703.9,
+      "price": null,
       "holding": 0,
       "avg_cost": null,
       "pnl": null,
       "pnl_pct": null,
-      "status": "buy_zone",
-      "status_color": "#22c55e",
-      "status_label": "\ud83d\udfe2 BUY",
+      "status": "watching",
+      "status_color": "#6b7280",
+      "status_label": "Watching",
       "thresholds": [
         {
           "type": "buy_zone",
@@ -106,14 +106,14 @@
       "symbol": "SBL",
       "name": "Siddhartha Bank Ltd.",
       "sector": "Commercial Bank",
-      "price": 392.5,
+      "price": null,
       "holding": 0,
       "avg_cost": null,
       "pnl": null,
       "pnl_pct": null,
-      "status": "buy_zone",
-      "status_color": "#22c55e",
-      "status_label": "\ud83d\udfe2 BUY",
+      "status": "watching",
+      "status_color": "#6b7280",
+      "status_label": "Watching",
       "thresholds": [
         {
           "type": "buy_zone",
