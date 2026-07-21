@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-21T09:41:46.723525+00:00",
+  "updated_at": "2026-07-21T10:07:21.705649+00:00",
   "stocks": [
     {
       "symbol": "NMFBS",
@@ -106,14 +106,14 @@
       "symbol": "SBL",
       "name": "Siddhartha Bank Ltd.",
       "sector": "Commercial Bank",
-      "price": null,
+      "price": 400.0,
       "holding": 0,
       "avg_cost": null,
       "pnl": null,
       "pnl_pct": null,
-      "status": "watching",
-      "status_color": "#6b7280",
-      "status_label": "Watching",
+      "status": "buy_zone",
+      "status_color": "#22c55e",
+      "status_label": "\ud83d\udfe2 BUY",
       "thresholds": [
         {
           "type": "buy_zone",
